@@ -89,7 +89,7 @@ footer{text-align:center;margin-top:30px;color:var(--parch-d);font-size:12px}
 <div class="game-box">
 <div class="game-head"><span class="t">Game 1</span><span class="ap" id="ap1">0.0 AP</span></div>
 <div class="grid3">
-<div><label for="g1pod">Pod Size</label><select id="g1pod"><option value="3">3 players</option><option value="4" selected>4 players</option><option value="5">5 players</option></select></div>
+<div><label for="g1pod">Pod Size</label><select id="g1pod"><option value="3">3 players</option><option value="4" selected>4 players</option></select></div>
 <div><label for="g1res">Your Result</label><select id="g1res"><option value="none">Neither</option><option value="win">Won the pod</option><option value="second">Finished 2nd</option></select></div>
 <div><label for="g1elim">Eliminations</label><input type="number" id="g1elim" min="0" max="4" value="0"></div>
 </div></div>
@@ -98,7 +98,7 @@ footer{text-align:center;margin-top:30px;color:var(--parch-d);font-size:12px}
 <div class="game-box" id="g2box" style="display:none">
 <div class="game-head"><span class="t">Game 2</span><span class="ap" id="ap2">0.0 AP</span></div>
 <div class="grid3">
-<div><label for="g2pod">Pod Size</label><select id="g2pod"><option value="3">3 players</option><option value="4" selected>4 players</option><option value="5">5 players</option></select></div>
+<div><label for="g2pod">Pod Size</label><select id="g2pod"><option value="3">3 players</option><option value="4" selected>4 players</option></select></div>
 <div><label for="g2res">Your Result</label><select id="g2res"><option value="none">Neither</option><option value="win">Won the pod</option><option value="second">Finished 2nd</option></select></div>
 <div><label for="g2elim">Eliminations</label><input type="number" id="g2elim" min="0" max="4" value="0"></div>
 </div></div>
@@ -125,12 +125,12 @@ footer{text-align:center;margin-top:30px;color:var(--parch-d);font-size:12px}
 <div><label for="eWeek">Week</label><select id="eWeek" onchange="loadEdit()"></select></div></div>
 <div id="eFields" style="display:none">
 <div class="game-box"><div class="game-head"><span class="t">Game 1</span></div><div class="grid3">
-<div><label for="e1pod">Pod</label><select id="e1pod"><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+<div><label for="e1pod">Pod</label><select id="e1pod"><option value="3">3</option><option value="4">4</option></select></div>
 <div><label for="e1res">Result</label><select id="e1res"><option value="none">Neither</option><option value="win">Won</option><option value="second">2nd</option></select></div>
 <div><label for="e1elim">Elims</label><input type="number" id="e1elim" min="0" max="4" value="0"></div></div></div>
 <div class="toggle"><input type="checkbox" id="e2on" onchange="document.getElementById('e2box').style.display=this.checked?'block':'none'"><label for="e2on">Played a second game</label></div>
 <div class="game-box" id="e2box" style="display:none"><div class="game-head"><span class="t">Game 2</span></div><div class="grid3">
-<div><label for="e2pod">Pod</label><select id="e2pod"><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+<div><label for="e2pod">Pod</label><select id="e2pod"><option value="3">3</option><option value="4">4</option></select></div>
 <div><label for="e2res">Result</label><select id="e2res"><option value="none">Neither</option><option value="win">Won</option><option value="second">2nd</option></select></div>
 <div><label for="e2elim">Elims</label><input type="number" id="e2elim" min="0" max="4" value="0"></div></div></div>
 <div class="bounty-line"><input type="checkbox" id="eB1"><label for="eB1">Challenge 1 completed</label></div>
@@ -161,8 +161,8 @@ var WEEKS=[
 {n:5,name:"The Theorist's Gambit",b1:"Deal combat damage with your commander",b2:"Damage every opponent in your pod in a single turn"}];
 var STORES=['Concord','Pineville','Belmont'];
 // A 4-player pod is the baseline. Smaller pods hand out wins and 2nd places more
-// often, so their raw AP is scaled down; 5-pods are scaled up for the reverse reason.
-var FACTOR={3:0.9375,4:1,5:1.0417};
+// often, so their raw AP is scaled down.
+var FACTOR={3:0.9375,4:1};
 var PIN="HEARTH26";
 var D=null;
 function $(id){return document.getElementById(id)}
