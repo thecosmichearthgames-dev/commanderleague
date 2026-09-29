@@ -1,0 +1,7 @@
+{
+  "name": "hearthfire-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "vercel-build": "echo static build" },
+  "dependencies": { "@vercel/blob": "^0.24.1" }
+}

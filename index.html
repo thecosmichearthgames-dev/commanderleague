@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hearthfire Ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--plum-dark:#2E112D;--plum:#4B2E5A;--plum-light:#5d3a6e;--gold:#C9A227;--gold-b:#E9C766;--parch:#F3E8D2;--parch-d:#E6D7B8;--ink:#241726;--ember:#9C3B2E}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,var(--plum-light) 0%,var(--plum-dark) 60%),var(--plum-dark);color:var(--parch);font-family:'EB Garamond',serif;min-height:100vh}
+.wrap{max-width:960px;margin:0 auto;padding:32px 20px 64px}
+header{text-align:center;margin-bottom:26px}
+header::before{content:"";display:block;width:64px;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 14px}
+h1{font-family:'Cinzel',serif;font-weight:900;letter-spacing:.04em;font-size:clamp(26px,5vw,42px);margin:0;color:var(--gold-b)}
+header p{font-style:italic;color:var(--parch-d);margin:8px 0 0;font-size:15px}
+nav.tabs{display:flex;gap:6px;justify-content:center;margin:26px 0 22px}
+nav.tabs button{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;background:var(--plum);color:var(--parch-d);border:1px solid var(--gold);border-bottom:none;padding:11px 22px 9px;cursor:pointer;border-radius:8px 8px 0 0;position:relative;top:1px}
+nav.tabs button.active{background:var(--parch);color:var(--ink);top:0}
+.panel{background:var(--parch);color:var(--ink);border:1px solid var(--gold);border-radius:4px 12px 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.35);padding:28px}
+.panel h2{font-family:'Cinzel',serif;font-size:20px;margin:0 0 4px;color:var(--plum)}
+.panel .sub{color:#6b5a45;font-size:14px;margin:0 0 20px;font-style:italic}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:560px){.grid,.grid3{grid-template-columns:1fr}}
+label{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#6b5a45;margin-bottom:5px;font-family:'JetBrains Mono',monospace;font-weight:600}
+input[type=text],input[type=number],input[type=password],select{width:100%;padding:10px 12px;border:1px solid #c9b98f;border-radius:6px;background:#fffdf7;font-family:'EB Garamond',serif;font-size:16px;color:var(--ink);margin-bottom:14px}
+input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px}
+.game-box{background:#F7F0E1;border:1px solid #DEC9A0;border-radius:8px;padding:14px 16px 4px;margin-bottom:14px}
+.game-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.game-head .t{font-family:'Cinzel',serif;font-size:14px;color:var(--plum)}
+.game-head .ap{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ember);font-weight:700}
+.toggle{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:15px}
+.toggle input{width:auto;margin:0}
+.toggle label{margin:0;text-transform:none;font-family:'EB Garamond',serif;font-size:15px;font-weight:400;color:var(--ink)}
+.bounty-box{background:#eadfc4;border:1px dashed var(--gold);border-radius:8px;padding:14px 16px;margin-bottom:18px}
+.week-name{font-family:'Cinzel',serif;color:var(--plum);font-size:15px;margin-bottom:8px}
+.bounty-line{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:15px}
+.bounty-line input{width:auto;margin:3px 0 0;padding:0}
+.bounty-line label{margin:0;text-transform:none;font-family:'EB Garamond',serif;font-size:15px;font-weight:400}
+.ap-preview{text-align:center;background:var(--plum-dark);color:var(--gold-b);border-radius:8px;padding:14px;margin-bottom:18px;font-family:'JetBrains Mono',monospace}
+.ap-preview .num{font-size:32px;font-weight:700;line-height:1}
+.ap-preview .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--parch-d)}
+button.submit{width:100%;background:var(--ember);color:var(--parch);font-family:'Cinzel',serif;letter-spacing:.06em;text-transform:uppercase;font-size:14px;border:none;padding:14px;border-radius:8px;cursor:pointer}
+button.submit:disabled{opacity:.5;cursor:wait}
+.status-msg{margin-top:14px;padding:12px 14px;border-radius:8px;font-size:14px;display:none}
+.status-msg.ok{display:block;background:#e2ecdc;color:#33502b;border:1px solid #8fae7f}
+.status-msg.err{display:block;background:#f4dede;color:#7a2b21;border:1px solid #c98a7f}
+select#locFilter{max-width:240px;margin-bottom:20px}
+.store-block{margin-bottom:28px}
+.store-head{display:flex;align-items:center;justify-content:space-between;background:var(--plum);border-radius:6px;padding:9px 14px;margin-bottom:10px}
+.store-head .nm{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-b);letter-spacing:.05em}
+.store-head .ct{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--parch-d)}
+table.board{width:100%;border-collapse:collapse}
+table.board th{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#6b5a45;text-align:left;padding:7px 10px;border-bottom:2px solid var(--gold)}
+table.board td{padding:9px 10px;border-bottom:1px solid #d9c9a3;vertical-align:middle}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-family:'Cinzel',serif;font-weight:700;font-size:13px;color:#fff;background:#8a7a5c}
+.rank.r1{background:radial-gradient(circle at 30% 30%,var(--gold-b),#a9821c);color:#3a2c05}
+.rank.r2{background:radial-gradient(circle at 30% 30%,#d9d9d9,#9a9a9a);color:#333}
+.rank.r3{background:radial-gradient(circle at 30% 30%,#d7a26b,#8a5a2e)}
+.crown{color:var(--gold);font-size:13px;margin-left:5px}
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;font-family:'JetBrains Mono',monospace}
+.pill.concord{background:#dfe6f2;color:#2b4a6b}
+.pill.pineville{background:#e9dcf2;color:#5b2b6b}
+.pill.belmont{background:#dcefe4;color:#2b6b4a}
+.total-ap{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:17px;color:var(--plum)}
+.weeks-row{display:flex;gap:4px;margin-top:3px}
+.wk-dot{width:17px;height:17px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;background:#d9c9a3;color:#8a7a5c}
+.wk-dot.done{background:var(--plum);color:var(--gold-b)}
+.empty-state{text-align:center;padding:26px 20px;color:#8a7a5c;font-style:italic}
+.refresh-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+button.ghost{background:none;border:1px solid var(--plum);color:var(--plum);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 14px;border-radius:6px;cursor:pointer}
+.notice{background:#eadfc4;border-left:3px solid var(--gold);padding:9px 13px;font-size:13px;color:#6b5a45;font-style:italic;margin-bottom:16px;border-radius:0 5px 5px 0}
+.tool-sec{margin-top:20px;padding-top:16px;border-top:1px solid #d9c9a3}
+.tool-sec p.h{font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#6b5a45;margin:0 0 10px}
+footer{text-align:center;margin-top:30px;color:var(--parch-d);font-size:12px}
+</style></head><body><div class="wrap">
+<header><h1>The Hearthfire Ledger</h1><p>The Fractured Conclave &middot; Commander League 5 &middot; Oct 5 &ndash; Nov 7</p></header>
+<nav class="tabs"><button id="tS" class="active" onclick="showTab('submit')">Submit Week</button><button id="tB" onclick="showTab('board')">Standings</button></nav>
+
+<div id="tabSubmit" class="panel">
+<h2>Report Weekly Results</h2>
+<p class="sub">Players self-report their own week. One entry per player per week &mdash; submitting again overwrites it, so use that to fix mistakes. An opponent from your pod must confirm the results.</p>
+<div class="grid"><div><label for="pName">Player Name</label><input type="text" id="pName" placeholder="e.g. Sarah K." autocomplete="off" list="kp"><datalist id="kp"></datalist></div>
+<div><label for="pLoc">Home Store</label><select id="pLoc"><option>Concord</option><option>Pineville</option><option>Belmont</option></select></div></div>
+<div class="grid"><div><label for="pDeck">Commander / Precon Deck</label><input type="text" id="pDeck" placeholder="e.g. Multiverse Reforged" autocomplete="off"></div>
+<div><label for="pWeek">Week</label><select id="pWeek"></select></div></div>
+<label for="confirmedBy">Confirmed By (an opponent from your pod)</label>
+<input type="text" id="confirmedBy" placeholder="e.g. Marcus T." autocomplete="off" list="kp">
+
+<div class="game-box">
+<div class="game-head"><span class="t">Game 1</span><span class="ap" id="ap1">0.0 AP</span></div>
+<div class="grid3">
+<div><label for="g1pod">Pod Size</label><select id="g1pod"><option value="3">3 players</option><option value="4" selected>4 players</option><option value="5">5 players</option></select></div>
+<div><label for="g1res">Your Result</label><select id="g1res"><option value="none">Neither</option><option value="win">Won the pod</option><option value="second">Finished 2nd</option></select></div>
+<div><label for="g1elim">Eliminations</label><input type="number" id="g1elim" min="0" max="4" value="0"></div>
+</div></div>
+
+<div class="toggle"><input type="checkbox" id="g2on" onchange="toggleG2()"><label for="g2on">I played a second game this week</label></div>
+<div class="game-box" id="g2box" style="display:none">
+<div class="game-head"><span class="t">Game 2</span><span class="ap" id="ap2">0.0 AP</span></div>
+<div class="grid3">
+<div><label for="g2pod">Pod Size</label><select id="g2pod"><option value="3">3 players</option><option value="4" selected>4 players</option><option value="5">5 players</option></select></div>
+<div><label for="g2res">Your Result</label><select id="g2res"><option value="none">Neither</option><option value="win">Won the pod</option><option value="second">Finished 2nd</option></select></div>
+<div><label for="g2elim">Eliminations</label><input type="number" id="g2elim" min="0" max="4" value="0"></div>
+</div></div>
+
+<div class="bounty-box" id="bountyBox"></div>
+<div class="ap-preview"><div class="num" id="apPreview">0.0</div><div class="lbl">Arcane Prestige this week</div></div>
+<button class="submit" id="submitBtn" onclick="submitEntry()">Save Week Results</button>
+<div class="status-msg" id="statusMsg"></div></div>
+
+<div id="tabBoard" class="panel" style="display:none">
+<div class="refresh-row"><div><label for="locFilter">View</label><select id="locFilter" onchange="renderBoard()"><option value="bystore">All Stores (separate)</option><option value="Concord">Concord only</option><option value="Pineville">Pineville only</option><option value="Belmont">Belmont only</option><option value="combined">Combined (reference)</option></select></div>
+<div><button class="ghost" onclick="loadBoard()">Refresh</button> <button class="ghost" onclick="exportData()">Export Backup</button></div></div>
+<div class="notice">Each store runs its own race. The top player at each location is crowned Store Champion when the regular season ends Nov 6. Scores are pod-size adjusted so 3-player pods don't pay more than 4-player pods.</div>
+<div id="boardWrap"><div class="empty-state">Loading the ledger...</div></div>
+
+<details style="margin-top:28px"><summary style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a7a5c">Staff Tools</summary>
+<div id="gate" style="margin-top:12px;padding:16px;background:#eadfc4;border:1px dashed var(--plum);border-radius:8px;max-width:320px">
+<label for="pin">Staff PIN</label><input type="password" id="pin" placeholder="Enter PIN">
+<button class="submit" style="background:var(--plum)" onclick="unlock()">Unlock</button>
+<div id="gateMsg" style="margin-top:8px;font-size:13px;color:#7a2b21"></div></div>
+<div id="tools" style="display:none">
+<div class="tool-sec"><p class="h">Edit or Delete a Single Entry</p>
+<div class="grid"><div><label for="ePlayer">Player</label><select id="ePlayer" onchange="loadEdit()"></select></div>
+<div><label for="eWeek">Week</label><select id="eWeek" onchange="loadEdit()"></select></div></div>
+<div id="eFields" style="display:none">
+<div class="game-box"><div class="game-head"><span class="t">Game 1</span></div><div class="grid3">
+<div><label for="e1pod">Pod</label><select id="e1pod"><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+<div><label for="e1res">Result</label><select id="e1res"><option value="none">Neither</option><option value="win">Won</option><option value="second">2nd</option></select></div>
+<div><label for="e1elim">Elims</label><input type="number" id="e1elim" min="0" max="4" value="0"></div></div></div>
+<div class="toggle"><input type="checkbox" id="e2on" onchange="document.getElementById('e2box').style.display=this.checked?'block':'none'"><label for="e2on">Played a second game</label></div>
+<div class="game-box" id="e2box" style="display:none"><div class="game-head"><span class="t">Game 2</span></div><div class="grid3">
+<div><label for="e2pod">Pod</label><select id="e2pod"><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+<div><label for="e2res">Result</label><select id="e2res"><option value="none">Neither</option><option value="win">Won</option><option value="second">2nd</option></select></div>
+<div><label for="e2elim">Elims</label><input type="number" id="e2elim" min="0" max="4" value="0"></div></div></div>
+<div class="bounty-line"><input type="checkbox" id="eB1"><label for="eB1">Challenge 1 completed</label></div>
+<div class="bounty-line"><input type="checkbox" id="eB2"><label for="eB2">Challenge 2 completed</label></div>
+<label for="eConf">Confirmed By</label><input type="text" id="eConf" list="kp">
+<div style="display:flex;gap:10px"><button class="submit" style="background:var(--plum)" onclick="saveEdit()">Save Changes</button>
+<button class="submit" style="background:#7a6a4a" onclick="delEdit()">Delete Entry</button></div></div>
+<div id="eMsg" style="margin-top:10px;font-size:13px"></div></div>
+<div class="tool-sec"><p class="h">Rename a Player (merges duplicates)</p>
+<div class="grid"><div><label for="rOld">Existing Name</label><select id="rOld"></select></div>
+<div><label for="rNew">Correct Name</label><input type="text" id="rNew" placeholder="e.g. James D."></div></div>
+<button class="submit" style="max-width:260px;background:var(--plum)" onclick="renamePlayer()">Rename and Merge</button>
+<div id="rMsg" style="margin-top:10px;font-size:13px"></div></div>
+<div class="tool-sec"><p class="h" style="color:#7a2b21">Danger Zone</p>
+<p style="margin:0 0 10px;font-size:14px;color:#7a2b21">Erases every Season 5 entry. Earlier seasons are stored separately and are not affected.</p>
+<label for="rc">Type RESET SEASON to confirm</label><input type="text" id="rc" placeholder="RESET SEASON" style="max-width:260px">
+<button class="submit" style="background:var(--ember);max-width:260px" onclick="resetAll()">Clear Season 5 Data</button>
+<div id="rsMsg" style="margin-top:10px;font-size:13px"></div></div>
+</div></details></div>
+<footer>Cosmic Hearth Games &middot; Concord &middot; Pineville &middot; Belmont</footer></div>
+
+<script>
+var WEEKS=[
+{n:1,name:"Enter the Echoverse",b1:"Play a game AND cast your commander",b2:"First Blood - first elimination in your pod"},
+{n:2,name:"Empower Jace",b1:"Control a planeswalker OR 5+ tokens",b2:"Draw 3+ cards in a single turn"},
+{n:3,name:"Hexhaven Curriculum",b1:"Cast a spell from exile or graveyard",b2:"Cast 3+ spells in one turn"},
+{n:4,name:"Below the Threshold",b1:"Have 7+ cards in your graveyard",b2:"Return a permanent from graveyard to battlefield"},
+{n:5,name:"The Theorist's Gambit",b1:"Deal combat damage with your commander",b2:"Damage every opponent in your pod in a single turn"}];
+var STORES=['Concord','Pineville','Belmont'];
+// A 4-player pod is the baseline. Smaller pods hand out wins and 2nd places more
+// often, so their raw AP is scaled down; 5-pods are scaled up for the reverse reason.
+var FACTOR={3:0.9375,4:1,5:1.0417};
+var PIN="HEARTH26";
+var D=null;
+function $(id){return document.getElementById(id)}
+function slug(s){return s.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function r1(x){return Math.round(x*10)/10}
+function fmt(x){return (Math.round(x*10)/10).toFixed(1)}
+function apiGet(){return fetch('/api/league',{cache:'no-store'}).then(function(r){if(!r.ok)throw new Error('GET '+r.status);return r.json()})}
+function apiPost(action,payload){return fetch('/api/league',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,payload:payload})}).then(function(r){return r.json().catch(function(){return {}}).then(function(j){if(!r.ok)throw new Error(j.error||('POST '+r.status));return j})})}
+function showTab(w){$('tabSubmit').style.display=w==='submit'?'block':'none';$('tabBoard').style.display=w==='board'?'block':'none';$('tS').classList.toggle('active',w==='submit');$('tB').classList.toggle('active',w==='board');if(w==='board')loadBoard()}
+function fillWeeks(){var h=WEEKS.map(function(w){return '<option value="'+w.n+'">Week '+w.n+' - '+w.name+'</option>'}).join('');$('pWeek').innerHTML=h;$('eWeek').innerHTML=h;$('pWeek').onchange=function(){bounty();prefill()};bounty()}
+function bounty(){var w=WEEKS[+$('pWeek').value-1];$('bountyBox').innerHTML='<div class="week-name">Week '+w.n+' Challenges - '+w.name+'</div><div class="bounty-line"><input type="checkbox" id="b1" onchange="prev()"><label for="b1">'+w.b1+' <span style="color:#9C3B2E">(+1 AP)</span></label></div><div class="bounty-line"><input type="checkbox" id="b2" onchange="prev()"><label for="b2">'+w.b2+' <span style="color:#9C3B2E">(+1 AP)</span></label></div>';prev()}
+function toggleG2(){$('g2box').style.display=$('g2on').checked?'block':'none';prev()}
+function gameAP(pod,res,elims){var base=1+(res==='win'?2:res==='second'?1:0)+(+elims||0);return base*(FACTOR[pod]||1)}
+function collectGames(){var g=[{pod:+$('g1pod').value,result:$('g1res').value,elims:+$('g1elim').value||0}];
+if($('g2on').checked)g.push({pod:+$('g2pod').value,result:$('g2res').value,elims:+$('g2elim').value||0});
+return g}
+function totalAP(){var gs=collectGames(),t=0;gs.forEach(function(g){t+=gameAP(g.pod,g.result,g.elims)});
+var b1=$('b1')&&$('b1').checked?1:0,b2=$('b2')&&$('b2').checked?1:0;return r1(t+b1+b2)}
+function prev(){var gs=collectGames();
+$('ap1').textContent=fmt(gameAP(gs[0].pod,gs[0].result,gs[0].elims))+' AP';
+if(gs[1])$('ap2').textContent=fmt(gameAP(gs[1].pod,gs[1].result,gs[1].elims))+' AP';
+$('apPreview').textContent=fmt(totalAP())}
+function msg(t,c){var e=$('statusMsg');e.textContent=t;e.className='status-msg '+c;clearTimeout(window._t);window._t=setTimeout(function(){e.className='status-msg'},8000)}
+function fillNames(){if(!D)return;$('kp').innerHTML=Object.keys(D.players).map(function(k){return '<option value="'+esc(D.players[k].name)+'"></option>'}).join('')}
+function refresh(){return apiGet().then(function(d){D=d;fillNames()}).catch(function(e){console.error('[Ledger] refresh failed:',e)})}
+function prefill(){var n=$('pName').value.trim();if(!n)return;
+var go=function(){if(!D)return;var known=Object.keys(D.players).map(function(k){return D.players[k].name});
+if(known.some(function(x){return slug(x)===slug(n)&&x!==n}))msg('Heads up: this looks close to an existing name. Use the exact same spelling to keep your AP together.','err');
+var d=D.submissions[slug(n)]&&D.submissions[slug(n)][$('pWeek').value];
+if(d){var gs=d.games||[];
+if(gs[0]){$('g1pod').value=gs[0].pod;$('g1res').value=gs[0].result;$('g1elim').value=gs[0].elims}
+$('g2on').checked=!!gs[1];toggleG2();
+if(gs[1]){$('g2pod').value=gs[1].pod;$('g2res').value=gs[1].result;$('g2elim').value=gs[1].elims}
+if($('b1'))$('b1').checked=!!d.b1;if($('b2'))$('b2').checked=!!d.b2;
+if(d.deck)$('pDeck').value=d.deck;if(d.location)$('pLoc').value=d.location;if(d.confirmedBy)$('confirmedBy').value=d.confirmedBy;
+prev();msg('Loaded your existing Week '+$('pWeek').value+' entry - edit and re-save to update it.','ok')}};
+if(!D)refresh().then(go);else go()}
+function submitEntry(){var name=$('pName').value.trim(),cb=$('confirmedBy').value.trim();
+if(!name)return msg('Enter a player name before saving.','err');
+if(!cb)return msg('An opponent needs to confirm this entry - enter who confirmed it.','err');
+if(slug(cb)===slug(name))return msg('The confirming player must be someone else from your pod.','err');
+var b=$('submitBtn');b.disabled=true;b.textContent='Saving...';
+var p={slug:slug(name),name:name,location:$('pLoc').value,deck:$('pDeck').value.trim(),week:$('pWeek').value,
+games:collectGames(),b1:$('b1').checked,b2:$('b2').checked,confirmedBy:cb,savedAt:new Date().toISOString()};
+p.ap=totalAP();
+apiPost('submit',p).then(function(){
+if(D){D.players[p.slug]={name:p.name,location:p.location,deck:p.deck};D.submissions[p.slug]=D.submissions[p.slug]||{};D.submissions[p.slug][p.week]=p;fillNames()}
+msg('Saved! '+p.name+' earned '+fmt(p.ap)+' AP in Week '+p.week+' at '+p.location+'.','ok')})
+.catch(function(e){console.error('[Ledger] submit failed:',e);msg('Could not save: '+e.message,'err')})
+.then(function(){b.disabled=false;b.textContent='Save Week Results'})}
+function exportData(){var blob=new Blob([JSON.stringify(D||{},null,2)],{type:'application/json'});var u=URL.createObjectURL(blob);var a=document.createElement('a');a.href=u;a.download='hearthfire-s5-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)}
+function unlock(){if($('pin').value===PIN){$('gate').style.display='none';$('tools').style.display='block'}else{$('gateMsg').textContent='Incorrect PIN.'}}
+function fillEditPlayers(){if(!D)return;var o=Object.keys(D.players).map(function(s){return {s:s,n:D.players[s].name,l:D.players[s].location}}).sort(function(a,b){return String(a.n).localeCompare(String(b.n))});
+var h='<option value="">- select a player -</option>'+o.map(function(x){return '<option value="'+x.s+'">'+esc(x.n)+' ('+esc(x.l||'?')+')</option>'}).join('');
+$('ePlayer').innerHTML=h;$('rOld').innerHTML=h}
+function loadEdit(){var s=$('ePlayer').value,w=$('eWeek').value;$('eMsg').textContent='';if(!s||!D){$('eFields').style.display='none';return}
+var d=D.submissions[s]&&D.submissions[s][w];
+if(d){var gs=d.games||[];
+if(gs[0]){$('e1pod').value=gs[0].pod;$('e1res').value=gs[0].result;$('e1elim').value=gs[0].elims}
+$('e2on').checked=!!gs[1];$('e2box').style.display=gs[1]?'block':'none';
+if(gs[1]){$('e2pod').value=gs[1].pod;$('e2res').value=gs[1].result;$('e2elim').value=gs[1].elims}
+$('eB1').checked=!!d.b1;$('eB2').checked=!!d.b2;$('eConf').value=d.confirmedBy||'';$('eFields').style.display='block'}
+else{$('eFields').style.display='none';$('eMsg').style.color='#6b5a45';$('eMsg').textContent='No entry yet for this player in that week.'}}
+function saveEdit(){var s=$('ePlayer').value,w=$('eWeek').value;if(!s)return;var pl=D.players[s]||{};
+var games=[{pod:+$('e1pod').value,result:$('e1res').value,elims:+$('e1elim').value||0}];
+if($('e2on').checked)games.push({pod:+$('e2pod').value,result:$('e2res').value,elims:+$('e2elim').value||0});
+var t=0;games.forEach(function(g){t+=gameAP(g.pod,g.result,g.elims)});
+var p={slug:s,name:pl.name,location:pl.location,deck:pl.deck,week:w,games:games,b1:$('eB1').checked,b2:$('eB2').checked,
+confirmedBy:$('eConf').value.trim(),savedAt:new Date().toISOString()};
+p.ap=r1(t+($('eB1').checked?1:0)+($('eB2').checked?1:0));
+apiPost('submit',p).then(function(){$('eMsg').style.color='#33502b';$('eMsg').textContent='Saved. '+p.name+' now shows '+fmt(p.ap)+' AP for Week '+w+'.';loadBoard()})
+.catch(function(e){$('eMsg').style.color='#7a2b21';$('eMsg').textContent='Could not save: '+e.message})}
+function delEdit(){var s=$('ePlayer').value,w=$('eWeek').value;if(!s)return;
+apiPost('delete',{slug:s,week:w}).then(function(){$('eMsg').style.color='#33502b';$('eMsg').textContent='Deleted that Week '+w+' entry.';$('eFields').style.display='none';loadBoard()})
+.catch(function(e){$('eMsg').style.color='#7a2b21';$('eMsg').textContent='Could not delete: '+e.message})}
+function renamePlayer(){var o=$('rOld').value,n=$('rNew').value.trim();
+if(!o||!n){$('rMsg').style.color='#7a2b21';$('rMsg').textContent='Pick the existing name and type the corrected name.';return}
+$('rMsg').style.color='#6b5a45';$('rMsg').textContent='Merging...';
+apiPost('rename',{oldSlug:o,newSlug:slug(n),newName:n}).then(function(r){$('rMsg').style.color='#33502b';$('rMsg').textContent='Done - renamed to "'+n+'" and merged '+r.migrated+' week(s).';$('rNew').value='';refresh().then(loadBoard)})
+.catch(function(e){$('rMsg').style.color='#7a2b21';$('rMsg').textContent='Merge failed: '+e.message})}
+function resetAll(){var c=$('rc').value.trim(),m=$('rsMsg');
+if(c!=='RESET SEASON'){m.style.color='#7a2b21';m.textContent='Type RESET SEASON exactly to confirm.';return}
+m.style.color='#6b5a45';m.textContent='Clearing...';
+apiPost('reset',{}).then(function(r){$('rc').value='';m.style.color='#33502b';m.textContent='Season 5 data cleared ('+r.cleared+' player records).';loadBoard()})
+.catch(function(e){m.style.color='#7a2b21';m.textContent='Could not clear data: '+e.message})}
+function loadBoard(){var wr=$('boardWrap');wr.innerHTML='<div class="empty-state">Loading the ledger...</div>';
+return apiGet().then(function(d){D=d;fillNames();fillEditPlayers();renderBoard()})
+.catch(function(e){console.error('[Ledger] board failed:',e);wr.innerHTML='<div class="empty-state">Could not load the standings. Try refreshing.</div>'})}
+function buildRows(){return Object.keys(D.submissions).map(function(s){var p=D.players[s]||{name:s,location:'',deck:''};var wk=D.submissions[s]||{};var t=0;
+var fl=WEEKS.map(function(w){var e=wk[String(w.n)];if(e)t+=Number(e.ap)||0;return e||null});
+return {name:p.name,location:p.location,deck:p.deck,total:r1(t),fl:fl}})}
+function tableFor(rows,showLoc,crown){
+if(!rows.length)return '<div class="empty-state">No results submitted yet.</div>';
+var rc=function(i){return i===0?'r1':i===1?'r2':i===2?'r3':''};
+return '<table class="board"><thead><tr><th>Rank</th><th>Player</th>'+(showLoc?'<th>Store</th>':'')+'<th>Deck</th><th>Weeks</th><th>Total AP</th></tr></thead><tbody>'+rows.map(function(r,i){
+return '<tr><td><span class="rank '+rc(i)+'">'+(i+1)+'</span></td><td><strong>'+esc(r.name)+'</strong>'+(crown&&i===0?'<span class="crown">&#9819;</span>':'')+'</td>'+(showLoc?'<td><span class="pill '+String(r.location||'').toLowerCase()+'">'+esc(r.location||'-')+'</span></td>':'')+'<td style="font-size:14px;color:#6b5a45">'+esc(r.deck||'-')+'</td><td><div class="weeks-row">'+r.fl.map(function(d,x){return '<div class="wk-dot '+(d?'done':'')+'" title="'+(d?'Week '+(x+1)+' - '+fmt(d.ap||0)+' AP, confirmed by '+esc(d.confirmedBy||'-'):'Week '+(x+1)+' - not reported')+'">'+(x+1)+'</div>'}).join('')+'</div></td><td class="total-ap">'+fmt(r.total)+'</td></tr>'}).join('')+'</tbody></table>'}
+function renderBoard(){var wr=$('boardWrap');if(!D){loadBoard();return}
+var v=$('locFilter').value;var all=buildRows();
+if(v==='bystore'){wr.innerHTML=STORES.map(function(st){var rows=all.filter(function(r){return r.location===st}).sort(function(a,b){return b.total-a.total});
+return '<div class="store-block"><div class="store-head"><span class="nm">'+st+'</span><span class="ct">'+rows.length+' player'+(rows.length===1?'':'s')+'</span></div>'+tableFor(rows,false,true)+'</div>'}).join('');return}
+if(v==='combined'){var rows=all.sort(function(a,b){return b.total-a.total});
+wr.innerHTML='<div class="notice">Reference only - Store Champions are decided on each store\'s own board, not this one.</div>'+tableFor(rows,true,false);return}
+var rows2=all.filter(function(r){return r.location===v}).sort(function(a,b){return b.total-a.total});
+wr.innerHTML='<div class="store-block"><div class="store-head"><span class="nm">'+v+'</span><span class="ct">'+rows2.length+' player'+(rows2.length===1?'':'s')+'</span></div>'+tableFor(rows2,false,true)+'</div>'}
+fillWeeks();refresh();
+$('pName').addEventListener('blur',prefill);
+['g1pod','g1res','g1elim','g2pod','g2res','g2elim'].forEach(function(i){var el=$(i);if(el){el.addEventListener('input',prev);el.addEventListener('change',prev)}});
+prev();
+</script></body></html>
