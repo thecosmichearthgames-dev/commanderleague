@@ -1,6 +1,4 @@
 {
   "framework": null,
-  "buildCommand": "echo static build",
-  "outputDirectory": "public",
   "functions": { "api/league.js": { "maxDuration": 30 } }
 }
